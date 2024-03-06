@@ -91,7 +91,39 @@ const login = async (req, res, next) => {
   }
 };
 
+const topUp = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { amount } = req.body;
+
+    if (!userId || isNaN(amount) || amount <= 0) {
+      return next(new apiError("Invalid input", 400));
+    }
+
+    const existingUser = await user.findByPk(userId);
+
+    if (!existingUser) {
+      return next(new apiError("User not found", 404));
+    }
+
+    existingUser.saldo_user = (existingUser.saldo_user || 0) + amount;
+    await existingUser.save();
+
+    res.status(200).json({
+      status: "Success",
+      message: `Top up successful. New balance: ${existingUser.saldo_user}`,
+      data: {
+        userId: existingUser.id,
+        saldo_user: existingUser.saldo_user,
+      },
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
 module.exports = {
   register,
   login,
+  topUp
 };
