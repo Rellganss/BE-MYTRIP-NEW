@@ -1,0 +1,293 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Documentasi API MyTrip",
+    "description": "Ini adalah API untuk Aplikasi MyTrip",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Auths",
+      "description": "ini API untuk Auths resources"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:6464/api/v1"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auths"],
+        "summary": "Return hasil hit api register untuk pengguna",
+        "description": "ini API untuk register pengguna",
+        "requestBody": {
+          "description": "ini request body untuk sukses register pengguna",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "User"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "no_telp": {
+                    "type": "string",
+                    "example": "03285729859"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "user123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sukses register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Register successful"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "dataValues": {
+                          "type": "object",
+                          "properties": {
+                            "role": {
+                              "type": "string",
+                              "example": "pengguna"
+                            },
+                            "id": {
+                              "type": "integer",
+                              "example": 4
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "User"
+                            },
+                            "no_telp": {
+                              "type": "string",
+                              "example": "03285729859"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2023-11-28T06:25:24.446Z"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2023-11-28T06:25:24.446Z"
+                            }
+                          }
+                        },
+                        "_previousDataValues": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "User"
+                            },
+                            "no_telp": {
+                              "type": "string",
+                              "example": "03285729859"
+                            },
+                            "id": {
+                              "type": "integer",
+                              "example": 4
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "pengguna"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2023-11-28T06:25:24.446Z"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2023-11-28T06:25:24.446Z"
+                            }
+                          }
+                        },
+                        "uniqno": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "_changed": {
+                          "type": "object"
+                        },
+                        "_options": {
+                          "type": "object"
+                        },
+                        "isNewRecord": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Gagal register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "example": "Username already taken"
+                        },
+                        {
+                          "type": "object",
+                          "example": "User email already taken"
+                        },
+                        {
+                          "type": "object",
+                          "example": "Minimum password must be 8 characters"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auths"],
+        "summary": "Return hasil hit api login untuk pengguna",
+        "description": "ini API untuk login pengguna",
+        "requestBody": {
+          "description": "ini request body untuk sukses login pengguna",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "example@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "example123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sukses login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJOdXIiLCJyb2xlIjoic3VwZXJhZG1pbiIsImVtYWlsIjoibnVyQGdtYWlsLmNvbSIsImlhdCI6MTY5Nzk0MzE2MX0.Iu5rRqx5lmRodxbdd__YKrevByFPMTcPXBOOd3laZrc"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gagal login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "example": "Incorrect password"
+                        },
+                        {
+                          "type": "object",
+                          "example": "User not verified"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gagal login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "message": {
+                      "type": "object",
+                      "example": "Email not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
