@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class hotel extends Model {
     /**
@@ -13,21 +11,26 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  hotel.init({
-    hotel_name: DataTypes.STRING,
-    hotel_city: DataTypes.STRING,
-    hotel_desc: DataTypes.STRING,
-    hotel_alamat: DataTypes.STRING,
-    hotel_foto: DataTypes.STRING,
-    hotel_harga: DataTypes.INTEGER,
-    hotel_facility: DataTypes.STRING,
-    hotel_cekin: DataTypes.DATE,
-    hotel_cekout: DataTypes.DATE,
-    hotel_kategori: DataTypes.ENUM,
-    hotel_room: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'hotel',
-  });
+  hotel.init(
+    {
+      hotel_name: DataTypes.STRING,
+      hotel_city: DataTypes.STRING,
+      hotel_desc: DataTypes.STRING,
+      hotel_alamat: DataTypes.STRING,
+      hotel_foto: DataTypes.STRING,
+      hotel_harga: DataTypes.INTEGER,
+      hotel_facility: DataTypes.STRING,
+      hotel_cekin: DataTypes.DATE,
+      hotel_cekout: DataTypes.DATE,
+      hotel_kategori: {
+        type: DataTypes.ENUM(["singelBad", "twinBad", "family"]),
+      },
+      hotel_room: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "hotel",
+    }
+  );
   return hotel;
 };

@@ -1,9 +1,10 @@
+require("dotenv").config();
 module.exports = {
   development: {
-    username: "root",
+    username: process.env.DB_USERNAME,
     password: "",
-    database: "MyTrip_db",
-    host: "localhost",
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
     dialect: "mysql",
   },
 };

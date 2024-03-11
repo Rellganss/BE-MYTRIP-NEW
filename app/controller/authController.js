@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { auth, user } = require("../models");
+const { AUTH_EMAIL } = process.env;
 
 const apiError = require("../../utils/apiError");
+const ApiError = require("../../utils/apiError");
+const sendEmail = require("../../utils/sendEmail");
 
 const register = async (req, res, next) => {
   try {
@@ -17,9 +20,15 @@ const register = async (req, res, next) => {
       return next(new apiError("User email already taken", 400));
     }
 
-    const passwordLength = password.length < 8;
-    if (passwordLength) {
-      return next(new apiError("Minimum password must be 8 characters", 400));
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const invalidLength = password.length < 8 || symbolRegex.test(password);
+    if (invalidLength) {
+      return next(
+        new apiError(
+          "Password must be at least 8 characters and contain no special characters",
+          400
+        )
+      );
     }
 
     const saltRounds = 10;
@@ -65,6 +74,17 @@ const login = async (req, res, next) => {
     }
     if (user.verified !== true) {
       return next(new apiError("User not verified", 401));
+    }
+
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const invalidLength = password.length < 8 || symbolRegex.test(password);
+    if (invalidLength) {
+      return next(
+        new apiError(
+          "Password must be at least 8 characters and contain no special characters",
+          400
+        )
+      );
     }
 
     if (user && bcrypt.compareSync(password, user.password)) {
@@ -122,8 +142,96 @@ const topUp = async (req, res, next) => {
   }
 };
 
+const sendEmailForgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    await auth.update(
+      {
+        verified: false,
+      },
+      {
+        where: {
+          email,
+        },
+      }
+    );
+    const mailOptions = {
+      from: AUTH_EMAIL,
+      to: email,
+      subject: `OTP from ${AUTH_EMAIL}`,
+      html: `
+                <p>Hello,</p>
+                <p>Your OTP is:</p>
+                <p style="color:black;font-size:25px;letter-spacing:2px;"><strong>VALO RI</strong></p>
+                <p>It will expire in ${email} minutes.</p>
+                <p>Best regards,</p>
+                <p>Team c8</p>
+            `,
+    };
+    await sendEmail(mailOptions);
+    res.status(200).json({
+      status: "Success",
+      message: "Email sent",
+      data: email,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
+
+    await auth.findOne({
+      where: {
+        email,
+      },
+      include: ["user"],
+    });
+
+    if (password !== confirmPassword) {
+      return next(new ApiError("Password tidak sesuai", 400));
+    }
+
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const invalidLength = password.length < 8 || symbolRegex.test(password);
+    if (invalidLength) {
+      return next(
+        new apiError(
+          "Password must be at least 8 characters and contain no special characters",
+          400
+        )
+      );
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    await auth.update(
+      {
+        password: hashedPassword,
+        verified: true,
+      },
+      {
+        where: {
+          email,
+        },
+      }
+    );
+    res.status(200).json({
+      status: "Success",
+      message: "Reset Password Successful",
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
 module.exports = {
   register,
   login,
-  topUp
+  topUp,
+  forgotPassword,
+  sendEmailForgotPassword,
 };
