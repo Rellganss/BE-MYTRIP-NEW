@@ -19,7 +19,7 @@ const createHotel = async (req, res, next) => {
         hotel_room: room,
         });
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'Create hotel successful',
       data: newHotel,
     });
