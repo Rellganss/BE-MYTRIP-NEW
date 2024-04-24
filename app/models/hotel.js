@@ -20,12 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       hotel_foto: DataTypes.STRING,
       hotel_harga: DataTypes.INTEGER,
       hotel_facility: DataTypes.STRING,
-      hotel_cekin: DataTypes.DATE,
-      hotel_cekout: DataTypes.DATE,
       hotel_kategori: {
         type: DataTypes.ENUM(["singelBad", "twinBad", "family"]),
       },
-      hotel_room: DataTypes.INTEGER,
     },
     {
       sequelize,

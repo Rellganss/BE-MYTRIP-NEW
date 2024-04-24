@@ -30,17 +30,8 @@ module.exports = {
       hotel_facility: {
         type: Sequelize.STRING,
       },
-      hotel_cekin: {
-        type: Sequelize.DATE,
-      },
-      hotel_cekout: {
-        type: Sequelize.DATE,
-      },
       hotel_kategori: {
         type: Sequelize.ENUM(["singelBad", "twinBad", "family"]),
-      },
-      hotel_room: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
