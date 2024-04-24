@@ -158,12 +158,12 @@ const sendEmailForgotPassword = async (req, res, next) => {
     const mailOptions = {
       from: AUTH_EMAIL,
       to: email,
-      subject: `OTP from ${AUTH_EMAIL}`,
+      subject: `Reset Password from ${AUTH_EMAIL}`,
       html: `
                 <p>Hello,</p>
-                <p>Your OTP is:</p>
-                <p style="color:black;font-size:25px;letter-spacing:2px;"><strong>VALO RI</strong></p>
-                <p>It will expire in ${email} minutes.</p>
+                <p>Request Reset Password</p>
+                <p style="color:black;font-size:25px;letter-spacing:2px;"><strong>click this link</strong></p>
+                <p>It will expire in 5 minutes.</p>
                 <p>Best regards,</p>
                 <p>Team c8</p>
             `,

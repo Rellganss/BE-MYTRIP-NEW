@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      hotel.hasOne(models.reservasi, {
+        foreignKey: {
+          name: "id_hotel",
+          allowNull: false,
+        },
+      });
     }
   }
   hotel.init(

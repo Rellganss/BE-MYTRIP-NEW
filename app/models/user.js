@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
         },
       });
+      user.hasMany(models.user_transaksi, {
+        foreignKey: {
+          name: "id_user",
+          allowNull: false,
+        },
+      });
     }
   }
   user.init(
