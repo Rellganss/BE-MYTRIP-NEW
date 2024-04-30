@@ -1,105 +1,105 @@
-const { Pesawat } = require('../models')
+const { pesawat } = require('../models')
 const apiError = require('../../utils/apiError')
 
 const createPesawat = async (req, res, next) => {
     try {
-        const { name, depature_city, destination_city, image, depature, destination, seat } = req.body
-    
-        const newPesawat = await Pesawat.create({
-            pesawat_name: name,
-            pesawat_depature_kota: depature_city,
-            pesawat_destination_kota: destination_city,
-            pesawat_image: image,
-            pesawat_depature: depature,
-            pesawat_destination: destination,
-            pesawat_seat: seat,
-        })
-    
-        res.status(200).json({
-        status: 'Create pesawat successful',
-        data: newPesawat,
-        })
+        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_depature, pesawat_destination } = req.body;
+
+        const newPesawat = await pesawat.create({
+            pesawat_name,
+            pesawat_depature_kota,
+            pesawat_destination_kota,
+            pesawat_depature,
+            pesawat_destination,
+        });
+
+        res.status(201).json({
+            status: 'Create pesawat successful',
+            data: newPesawat,
+        });
     } catch (err) {
-        next(new apiError(err.message, 500))
+        next(new apiError(err.message, 500));
     }
-}
+};
 
 const getAllPesawat = async (req, res, next) => {
     try {
-        const allPesawat = await Pesawat.findAll()
-    
+        const allPesawat = await pesawat.findAll();
+
         res.status(200).json({
-        status: 'Get all pesawat successful',
-        data: allPesawat,
-        })
+            status: 'Get all pesawat successful',
+            data: allPesawat,
+        });
     } catch (err) {
-        next(new apiError(err.message, 500))
+        next(new apiError(err.message, 500));
     }
-}
+};
 
 const getPesawatById = async (req, res, next) => {
     try {
-        const { id } = req.params
-        const pesawatById = await Pesawat.findOne({ where: { id } })
-    
+        const { id } = req.params;
+        const pesawatById = await pesawat.findByPk(id);
+
+        if (!pesawatById) {
+            return next(new apiError('Pesawat not found', 404));
+        }
+
         res.status(200).json({
-        status: 'Get pesawat by id successful',
-        data: pesawatById,
-        })
+            status: 'Get pesawat by id successful',
+            data: pesawatById,
+        });
     } catch (err) {
-        next(new apiError(err.message, 500))
+        next(new apiError(err.message, 500));
     }
-}
+};
 
 const updatePesawat = async (req, res, next) => {
     try {
-        const { id } = req.params
-        const { name, depature_city, destination_city, image, depature, destination, seat } = req.body
-    
-        const pesawatById = await Pesawat.findOne({ where: { id } })
-    
+        const { id } = req.params;
+        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_depature, pesawat_destination } = req.body;
+
+        let pesawatById = await pesawat.findByPk(id);
+
         if (!pesawatById) {
-        return next(new apiError('Pesawat not found', 404))
+            return next(new apiError('Pesawat not found', 404));
         }
-    
-        const updatedPesawat = await pesawatById.update({
-        pesawat_name: name,
-        pesawat_depature_kota: depature_city,
-        pesawat_destination_kota: destination_city,
-        pesawat_image: image,
-        pesawat_depature: depature,
-        pesawat_destination: destination,
-        pesawat_seat: seat,
-        })
-    
+
+        pesawatById = await pesawatById.update({
+            pesawat_name,
+            pesawat_depature_kota,
+            pesawat_destination_kota,
+            pesawat_depature,
+            pesawat_destination,
+        });
+
         res.status(200).json({
-        status: 'Update pesawat successful',
-        data: updatedPesawat,
-        })
+            status: 'Update pesawat successful',
+            data: pesawatById,
+        });
     } catch (err) {
-        next(new apiError(err.message, 500))
+        next(new apiError(err.message, 500));
     }
-}
+};
 
 const deletePesawat = async (req, res, next) => {
     try {
-        const { id } = req.params
-    
-        const pesawatById = await Pesawat.findOne({ where: { id } })
-    
+        const { id } = req.params;
+
+        const pesawatById = await pesawat.findByPk(id);
+
         if (!pesawatById) {
-        return next(new apiError('Pesawat not found', 404))
+            return next(new apiError('Pesawat not found', 404));
         }
-    
-        await pesawatById.destroy()
-    
+
+        await pesawatById.destroy();
+
         res.status(200).json({
-        status: 'Delete pesawat successful',
-        })
+            status: 'Delete pesawat successful',
+        });
     } catch (err) {
-        next(new apiError(err.message, 500))
+        next(new apiError(err.message, 500));
     }
-}
+};
 
 module.exports = {
     createPesawat,
@@ -107,4 +107,4 @@ module.exports = {
     getPesawatById,
     updatePesawat,
     deletePesawat,
-}
+};
