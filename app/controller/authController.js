@@ -1,17 +1,16 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { auth, user } = require("../models");
+const { Auth, User } = require("../models"); // Mengimpor model Auth dan User
 const { AUTH_EMAIL } = process.env;
 
 const apiError = require("../../utils/apiError");
-const ApiError = require("../../utils/apiError");
 const sendEmail = require("../../utils/sendEmail");
 
 const register = async (req, res, next) => {
   try {
     const { name, email, no_telp, password } = req.body;
 
-    const usercek = await auth.findOne({
+    const usercek = await Auth.findOne({
       where: {
         email,
       },
@@ -34,12 +33,12 @@ const register = async (req, res, next) => {
     const saltRounds = 10;
     const hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-    const newUser = await user.create({
+    const newUser = await User.create({
       name,
       no_telp,
     });
 
-    await auth.create({
+    await Auth.create({
       email,
       password: hashedPassword,
       id_user: newUser.id,
@@ -62,11 +61,11 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await auth.findOne({
+    const user = await Auth.findOne({
       where: {
         email,
       },
-      include: ["user"],
+      include: [User], // Menggabungkan model User dalam hasil query
     });
 
     if (!user) {
@@ -90,9 +89,9 @@ const login = async (req, res, next) => {
     if (user && bcrypt.compareSync(password, user.password)) {
       const token = jwt.sign(
         {
-          id: user.userId,
-          username: user.user.name,
-          role: user.user.role,
+          id: user.id_user, // Menggunakan id_user dari model Auth
+          username: user.User.name, // Mengakses nama pengguna dari model User
+          role: user.User.role, // Mengakses peran pengguna dari model User
           email: user.email,
         },
         process.env.JWT_SECRET
@@ -120,7 +119,7 @@ const topUp = async (req, res, next) => {
       return next(new apiError("Invalid input", 400));
     }
 
-    const existingUser = await user.findByPk(userId);
+    const existingUser = await User.findByPk(userId);
 
     if (!existingUser) {
       return next(new apiError("User not found", 404));
@@ -145,7 +144,7 @@ const topUp = async (req, res, next) => {
 const sendEmailForgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    await auth.update(
+    await Auth.update(
       {
         verified: false,
       },
@@ -183,11 +182,11 @@ const forgotPassword = async (req, res, next) => {
   try {
     const { email, password, confirmPassword } = req.body;
 
-    await auth.findOne({
+    await Auth.findOne({
       where: {
         email,
       },
-      include: ["user"],
+      include: [User], // Menggabungkan model User dalam hasil query
     });
 
     if (password !== confirmPassword) {
@@ -208,7 +207,7 @@ const forgotPassword = async (req, res, next) => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await auth.update(
+    await Auth.update(
       {
         password: hashedPassword,
         verified: true,

@@ -1,64 +1,41 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class reservasi extends Model {
+  class Reservasi extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      reservasi.belongsTo(models.pesawat, {
-        foreignKey: {
-          name: "id_pesawat",
-        },
+      Reservasi.belongsTo(models.Pesawat, {
+        foreignKey: 'id_pesawat',
+        as: 'pesawat',
       });
-      reservasi.belongsTo(models.hotel, {
-        foreignKey: {
-          name: "id_hotel",
-        },
+      Reservasi.belongsTo(models.Hotel, {
+        foreignKey: 'id_hotel',
+        as: 'hotel',
       });
-      reservasi.hasOne(models.user_transaksi, {
-        foreignKey: {
-          name: "id_reservasi",
-          allowNull: false,
-        },
+      Reservasi.hasOne(models.UserTransaksi, {
+        foreignKey: 'id_reservasi',
+        as: 'user_transaksi',
       });
+      
     }
   }
-  reservasi.init(
-    {
-      id_pesawat: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      id_hotel: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      cek_in_hotel: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      cek_out_hotel: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      hotel_room: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      seat: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      total_price: DataTypes.INTEGER,
-    },
-    {
-      sequelize,
-      modelName: "reservasi",
-    }
-  );
-  return reservasi;
+  Reservasi.init({
+    id_pesawat: DataTypes.INTEGER,
+    id_hotel: DataTypes.INTEGER,
+    cek_in_hotel: DataTypes.DATE,
+    cek_out_hotel: DataTypes.DATE,
+    hotel_room: DataTypes.INTEGER,
+    seat: DataTypes.STRING,
+    total_price: DataTypes.INTEGER
+  }, {
+    sequelize,
+    modelName: 'Reservasi',
+  });
+  return Reservasi;
 };

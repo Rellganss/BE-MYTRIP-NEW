@@ -2,22 +2,25 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user_transaksis', {
+    await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id_user: {
-        type: Sequelize.INTEGER
+      name: {
+        type: Sequelize.STRING
       },
-      id_reservasi: {
-        type: Sequelize.INTEGER
+      role: {
+        type: Sequelize.ENUM(["admin", "mitra", "pengguna"]),
+        defaultValue: "pengguna"
       },
-      status: {
-        type: Sequelize.ENUM(["pending", "success", "cancel"]),
-        defaultValue: "pending",
+      no_telp: {
+        type: Sequelize.STRING
+      },
+      saldo_user: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -30,6 +33,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user_transaksis');
+    await queryInterface.dropTable('Users');
   }
 };

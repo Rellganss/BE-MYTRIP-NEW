@@ -1,22 +1,16 @@
 "use strict";
 const { Model } = require("sequelize");
+const User = require("./user"); // Pastikan impor model user dilakukan dengan benar
+
 module.exports = (sequelize, DataTypes) => {
-  class auth extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class Auth extends Model {
     static associate(models) {
-      // define association here
-      auth.belongsTo(models.user, {
-        foreignKey: {
-          name: "id_user",
-        },
+      Auth.belongsTo(models.User, { // Ganti 'user' dengan 'User'
+        foreignKey: "id_user",
       });
     }
   }
-  auth.init(
+  Auth.init(
     {
       id_user: DataTypes.INTEGER,
       email: { type: DataTypes.STRING, unique: true },
@@ -25,8 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "auth",
+      modelName: "Auth",
     }
   );
-  return auth;
+  return Auth;
 };
