@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { Auth, User } = require("../models"); // Mengimpor model Auth dan User
+const { Auth, User } = require("../models");
 const { AUTH_EMAIL } = process.env;
 
 const apiError = require("../../utils/apiError");
@@ -65,7 +65,7 @@ const login = async (req, res, next) => {
       where: {
         email,
       },
-      include: [User], // Menggabungkan model User dalam hasil query
+      include: [User],
     });
 
     if (!user) {
@@ -89,9 +89,9 @@ const login = async (req, res, next) => {
     if (user && bcrypt.compareSync(password, user.password)) {
       const token = jwt.sign(
         {
-          id: user.id_user, // Menggunakan id_user dari model Auth
-          username: user.User.name, // Mengakses nama pengguna dari model User
-          role: user.User.role, // Mengakses peran pengguna dari model User
+          id: user.id_user,
+          username: user.User.name,
+          role: user.User.role,
           email: user.email,
         },
         process.env.JWT_SECRET
@@ -134,6 +134,69 @@ const topUp = async (req, res, next) => {
       data: {
         userId: existingUser.id,
         saldo_user: existingUser.saldo_user,
+      },
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const authenticateAdminMitra = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await Auth.findOne({
+      where: {
+        email,
+      },
+      include: ["User"],
+    });
+
+    if (!user) {
+      return next(new apiError("Email not found", 404));
+    }
+
+    if (user.User.role !== "admin" || user.User.role !== "mitra") {
+      return next(
+        new apiError("Unauthorized. Only admin and mitra can login", 401)
+      );
+    }
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+      const token = jwt.sign(
+        {
+          id: user.userId,
+          username: user.User.name,
+          role: user.User.role,
+          email: user.email,
+        },
+        process.env.JWT_SECRET
+      );
+
+      res.status(200).json({
+        status: "Success",
+        message: "Berhasil login",
+        data: token,
+        role: user.User.role,
+      });
+    } else {
+      return next(new apiError("Incorrect password", 401));
+    }
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const authenticate = async (req, res, next) => {
+  try {
+    res.status(200).json({
+      status: "Success",
+      data: {
+        id: req.user.id,
+        name: req.user.name,
+        role: req.user.role,
+        phoneNumber: req.user.no_telp,
+        saldo_user: req.user.saldo_user,
       },
     });
   } catch (err) {
@@ -186,7 +249,7 @@ const forgotPassword = async (req, res, next) => {
       where: {
         email,
       },
-      include: [User], // Menggabungkan model User dalam hasil query
+      include: [User],
     });
 
     if (password !== confirmPassword) {
@@ -233,4 +296,6 @@ module.exports = {
   topUp,
   forgotPassword,
   sendEmailForgotPassword,
+  authenticate,
+  authenticateAdminMitra,
 };
