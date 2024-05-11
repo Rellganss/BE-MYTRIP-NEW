@@ -11,8 +11,8 @@ dotenv.config();
     async up(queryInterface, Sequelize) {
       await queryInterface.bulkInsert("users", [
         {
-          name: "adminc8",
-          no_telp: "+628236576342564",
+          name: "mitra1",
+          no_telp: "+628236576340987",
           role: "admin",
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -27,7 +27,7 @@ dotenv.config();
 
       await queryInterface.bulkInsert("auths", [
         {
-          email: "adminc8@mail.com",
+          email: "mitra1@mail.com",
           password: hashedPassword,
           id_user: users[0].id,
           verified: true,
