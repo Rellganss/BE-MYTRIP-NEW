@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     pesawat_depature_kota: DataTypes.STRING,
     pesawat_destination_kota: DataTypes.STRING,
     pesawat_harga: DataTypes.INTEGER,
+    pesawat_foto: DataTypes.STRING,
     pesawat_depature: DataTypes.DATE,
     pesawat_destination: DataTypes.DATE
   }, {

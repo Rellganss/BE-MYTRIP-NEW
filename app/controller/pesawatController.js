@@ -3,13 +3,14 @@ const apiError = require('../../utils/apiError')
 
 const createPesawat = async (req, res, next) => {
     try {
-        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_harga, pesawat_depature, pesawat_destination } = req.body;
+        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_harga, pesawat_foto, pesawat_depature, pesawat_destination } = req.body;
 
         const newPesawat = await Pesawat.create({
             pesawat_name,
             pesawat_depature_kota,
             pesawat_destination_kota,
             pesawat_harga,
+            pesawat_foto,
             pesawat_depature,
             pesawat_destination,
         });
@@ -57,7 +58,7 @@ const getPesawatById = async (req, res, next) => {
 const updatePesawat = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_harga, pesawat_depature, pesawat_destination } = req.body;
+        const { pesawat_name, pesawat_depature_kota, pesawat_destination_kota, pesawat_harga, pesawat_foto, pesawat_depature, pesawat_destination } = req.body;
 
         let pesawatById = await Pesawat.findByPk(id);
 
@@ -70,6 +71,7 @@ const updatePesawat = async (req, res, next) => {
             pesawat_depature_kota,
             pesawat_destination_kota,
             pesawat_harga,
+            pesawat_foto,
             pesawat_depature,
             pesawat_destination,
         });

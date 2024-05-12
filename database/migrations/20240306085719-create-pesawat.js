@@ -21,6 +21,9 @@ module.exports = {
       pesawat_harga: {
         type: Sequelize.INTEGER
       },
+      pesawat_foto: {
+        type: Sequelize.STRING
+      },
       pesawat_depature: {
         type: Sequelize.DATE
       },
