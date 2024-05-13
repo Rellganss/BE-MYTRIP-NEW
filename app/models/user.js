@@ -1,7 +1,7 @@
-'use strict';
-const { Model, Sequelize } = require('sequelize');
-const Auth = require('./auth');
-const UserTransaksi = require('./usertransaksi');
+"use strict";
+const { Model, Sequelize } = require("sequelize");
+const Auth = require("./auth");
+const UserTransaksi = require("./usertransaksi");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -12,26 +12,29 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasOne(models.Auth, {
-        foreignKey: 'id_user',
+        foreignKey: "id_user",
         allowNull: false,
       });
       User.hasMany(models.UserTransaksi, {
-        foreignKey: 'id_user',
+        foreignKey: "id_user",
         allowNull: false,
       });
     }
   }
-  User.init({
-    name: DataTypes.STRING,
-    role: {
-      type: Sequelize.ENUM(["admin", "mitra", "pengguna"]),
-      defaultValue: "pengguna"
+  User.init(
+    {
+      name: DataTypes.STRING,
+      role: {
+        type: Sequelize.ENUM(["admin", "mitra", "pengguna"]),
+        defaultValue: "pengguna",
+      },
+      no_telp: DataTypes.STRING,
+      saldo_user: { type: DataTypes.INTEGER, defaultValue: 0 },
     },
-    no_telp: DataTypes.STRING,
-    saldo_user: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
+    {
+      sequelize,
+      modelName: "User",
+    }
+  );
   return User;
 };

@@ -1,19 +1,23 @@
 const router = require("express").Router();
-const pesawatController = require('../controller/pesawatController');
+const pesawatController = require("../controller/pesawatController");
+const multer = require("../middleware/multer");
 
-// Endpoint untuk membuat pesawat baru
-router.post('/tambahpesawat', pesawatController.createPesawat);
+router.post(
+  "/tambahpesawat",
+  multer.single("pesawat_foto"),
+  pesawatController.createPesawat
+);
 
-// Endpoint untuk mendapatkan semua pesawat
-router.get('/totalpesawat', pesawatController.getAllPesawat);
+router.get("/totalpesawat", pesawatController.getAllPesawat);
 
-// Endpoint untuk mendapatkan pesawat berdasarkan ID
-router.get('/pesawat/:id', pesawatController.getPesawatById);
+router.get("/pesawat/:id", pesawatController.getPesawatById);
 
-// Endpoint untuk memperbarui pesawat berdasarkan ID
-router.put('/perbaruipesawat/:id', pesawatController.updatePesawat);
+router.put(
+  "/perbaruipesawat/:id",
+  multer.single("pesawat_foto"),
+  pesawatController.updatePesawat
+);
 
-// Endpoint untuk menghapus pesawat berdasarkan ID
-router.delete('/:id', pesawatController.deletePesawat);
+router.delete("/:id", pesawatController.deletePesawat);
 
 module.exports = router;

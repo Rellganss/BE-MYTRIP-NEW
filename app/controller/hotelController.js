@@ -1,120 +1,132 @@
-const { Hotel, Facility, HotelFacility } = require('../models'); // Mengimpor model Hotel, Facility, dan HotelFacility
-const apiError = require('../../utils/apiError');
+const { Hotel, Facility, HotelFacility } = require("../models");
+const apiError = require("../../utils/apiError");
+const path = require("path");
+const imagekit = require("../libs/imagekit");
 
 const createHotel = async (req, res, next) => {
-    try {
-        const { hotel_name, hotel_city, hotel_desc, hotel_alamat, hotel_foto, hotel_harga, hotel_kategori, hotel_facilities } = req.body; // Menyesuaikan nama field yang diterima dengan struktur data
-
-        // Membuat hotel baru
-        const newHotel = await Hotel.create({
-            hotel_name,
-            hotel_city,
-            hotel_desc,
-            hotel_alamat,
-            hotel_foto,
-            hotel_harga,
-            hotel_kategori,
-        });
-
-        // Jika terdapat fasilitas yang dikirimkan, asosiasikan fasilitas dengan hotel
-        if (hotel_facilities && hotel_facilities.length > 0) {
-            await newHotel.addFacilities(hotel_facilities); // Menambahkan fasilitas ke hotel menggunakan metode addFacilities yang disediakan oleh Sequelize
-        }
-
-        res.status(201).json({
-            status: 'Create hotel successful',
-            data: newHotel,
-        });
-    } catch (err) {
-        next(new apiError(err.message, 500));
+  const hotelBody = req.body;
+  const file = req.file;
+  let hotel_foto;
+  try {
+    if (file) {
+      const filename = file.originalname;
+      const extension = path.extname(filename);
+      const uploadImage = await imagekit.upload({
+        file: file.buffer,
+        fileName: `IMG-${Date.now()}.${extension}`,
+      });
+      hotel_foto = uploadImage.url;
     }
+    // Membuat hotel baru
+    const newHotel = await Hotel.create({
+      ...hotelBody,
+      hotel_foto,
+    });
+
+    // Jika terdapat fasilitas yang dikirimkan, asosiasikan fasilitas dengan hotel
+    // if (hotel_facilities && hotel_facilities.length > 0) {
+    //   await newHotel.addFacilities(hotel_facilities); // Menambahkan fasilitas ke hotel menggunakan metode addFacilities yang disediakan oleh Sequelize
+    // }
+
+    res.status(201).json({
+      status: "Create hotel successful",
+      data: newHotel,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
 };
 
 const getAllHotel = async (req, res, next) => {
-    try {
-        const allHotel = await Hotel.findAll();
+  try {
+    const allHotel = await Hotel.findAll();
 
-        res.status(200).json({
-            status: 'Get all hotel successful',
-            data: allHotel,
-        });
-    } catch (err) {
-        next(new apiError(err.message, 500));
-    }
+    res.status(200).json({
+      status: "Get all hotel successful",
+      data: allHotel,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
 };
 
 const getHotelById = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const hotelById = await Hotel.findByPk(id);
+  try {
+    const { id } = req.params;
+    const hotelById = await Hotel.findByPk(id);
 
-        if (!hotelById) {
-            return next(new apiError('Hotel not found', 404));
-        }
-
-        res.status(200).json({
-            status: 'Get hotel by id successful',
-            data: hotelById,
-        });
-    } catch (err) {
-        next(new apiError(err.message, 500));
+    if (!hotelById) {
+      return next(new apiError("Hotel not found", 404));
     }
+
+    res.status(200).json({
+      status: "Get hotel by id successful",
+      data: hotelById,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
 };
 
 const updateHotel = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { hotel_name, hotel_city, hotel_desc, hotel_alamat, hotel_foto, hotel_harga, hotel_kategori, hotel_facilities } = req.body;
+  const { id } = req.params;
+  const hotelBody = req.body;
+  const file = req.file;
+  let hotel_foto;
 
-        let hotelById = await Hotel.findByPk(id);
+  let hotelById = await Hotel.findByPk(id);
 
-        if (!hotelById) {
-            return next(new apiError('Hotel not found', 404));
-        }
+  if (!hotelById) {
+    return next(new apiError("Hotel not found", 404));
+  }
 
-        // Update data hotel
-        hotelById = await hotelById.update({
-            hotel_name,
-            hotel_city,
-            hotel_desc,
-            hotel_alamat,
-            hotel_foto,
-            hotel_harga,
-            hotel_kategori,
-        });
-
-        // Jika terdapat fasilitas yang dikirimkan, update asosiasi fasilitas dengan hotel
-        if (hotel_facilities && hotel_facilities.length > 0) {
-            await hotelById.setFacilities(hotel_facilities); // Mengatur kembali fasilitas untuk hotel menggunakan metode setFacilities yang disediakan oleh Sequelize
-        }
-
-        res.status(200).json({
-            status: 'Update hotel successful',
-            data: hotelById,
-        });
-    } catch (err) {
-        next(new apiError(err.message, 500));
+  try {
+    if (file) {
+      const filename = file.originalname;
+      const extension = path.extname(filename);
+      const uploadImage = await imagekit.upload({
+        file: file.buffer,
+        fileName: `IMG-${Date.now()}.${extension}`,
+      });
+      hotel_foto = uploadImage.url;
     }
+    const updateHotelById = await hotelById.update({
+      ...hotelBody,
+      hotel_foto,
+    });
+
+    // // Jika terdapat fasilitas yang dikirimkan, update asosiasi fasilitas dengan hotel
+    // if (hotel_facilities && hotel_facilities.length > 0) {
+    //   await hotelById.setFacilities(hotel_facilities); // Mengatur kembali fasilitas untuk hotel menggunakan metode setFacilities yang disediakan oleh Sequelize
+    // }
+
+    res.status(200).json({
+      status: "Update hotel successful",
+      data: updateHotelById,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
 };
 
 const deleteHotel = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const deletedHotel = await Hotel.destroy({ where: { id } });
+  try {
+    const { id } = req.params;
+    const deletedHotel = await Hotel.destroy({ where: { id } });
 
-        res.status(200).json({
-            status: 'Delete hotel successful',
-            data: deletedHotel,
-        });
-    } catch (err) {
-        next(new apiError(err.message, 500));
-    }
+    res.status(200).json({
+      status: "Delete hotel successful",
+      data: deletedHotel,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
 };
 
 module.exports = {
-    createHotel,
-    getAllHotel,
-    getHotelById,
-    updateHotel,
-    deleteHotel,
+  createHotel,
+  getAllHotel,
+  getHotelById,
+  updateHotel,
+  deleteHotel,
 };

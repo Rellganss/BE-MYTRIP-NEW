@@ -1,6 +1,6 @@
 "use strict";
 
-const { user } = require("../../app/models");
+const { User } = require("../../app/models");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 dotenv.config();
@@ -9,7 +9,7 @@ dotenv.config();
 (
   module.exports = {
     async up(queryInterface, Sequelize) {
-      await queryInterface.bulkInsert("users", [
+      await queryInterface.bulkInsert("Users", [
         {
           name: "mitra1",
           no_telp: "+628236576340987",
@@ -23,13 +23,13 @@ dotenv.config();
       const saltRounds = 10;
       const hashedPassword = bcrypt.hashSync(adminPassword, saltRounds);
 
-      const users = await user.findAll();
+      const users = await User.findAll();
 
       await queryInterface.bulkInsert("auths", [
         {
           email: "mitra1@mail.com",
           password: hashedPassword,
-          id_user: users[0].id,
+          id_user: users[1].id,
           verified: true,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -37,7 +37,7 @@ dotenv.config();
       ]);
     },
     async down(queryInterface, Sequelize) {
-      await queryInterface.bulkDelete("users", null, {});
+      await queryInterface.bulkDelete("Users", null, {});
       await queryInterface.bulkDelete("auths", null, {});
     },
   }
