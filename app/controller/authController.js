@@ -141,6 +141,41 @@ const topUp = async (req, res, next) => {
   }
 };
 
+const subtractBalance = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { amount } = req.body;
+
+    if (!userId || isNaN(amount) || amount <= 0) {
+      return next(new apiError("Invalid input", 400));
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return next(new apiError("User not found", 404));
+    }
+
+    if (user.saldo_user < amount) {
+      return next(new apiError("Insufficient balance", 400));
+    }
+
+    user.saldo_user -= amount;
+    await user.save();
+
+    res.status(200).json({
+      status: "Success",
+      message: `Balance subtracted successfully. New balance: ${user.saldo_user}`,
+      data: {
+        userId: user.id,
+        saldo_user: user.saldo_user,
+      },
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
 const authenticateAdminMitra = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -290,6 +325,121 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
+const registerMitra = async (req, res, next) => {
+  try {
+    const { name, email, no_telp, password } = req.body;
+
+    const usercek = await Auth.findOne({
+      where: {
+        email,
+      },
+    });
+    if (usercek) {
+      return next(new apiError("User email already taken", 400));
+    }
+
+    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const invalidLength = password.length < 8 || symbolRegex.test(password);
+    if (invalidLength) {
+      return next(
+        new apiError(
+          "Password must be at least 8 characters and contain no special characters",
+          400
+        )
+      );
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+    const newUser = await User.create({
+      name,
+      no_telp,
+      role: "mitra",
+    });
+
+    await Auth.create({
+      email,
+      password: hashedPassword,
+      id_user: newUser.id,
+      verified: true,
+    });
+
+    res.status(200).json({
+      status: "Register successful",
+      data: {
+        email,
+        ...newUser,
+      },
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const editUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, no_telp, role } = req.body;
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return next(new apiError("User not found", 404));
+    }
+
+    user.name = name || user.name;
+    user.no_telp = no_telp || user.no_telp;
+    user.role = role || user.role;
+    await user.save();
+
+    res.status(200).json({
+      status: "User updated successfully",
+      data: user,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) {
+      return next(new apiError("User not found", 404));
+    }
+
+    await user.destroy();
+    res.status(200).json({
+      status: "User deleted successfully",
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
+const getUsersByRole = async (req, res, next) => {
+  try {
+    const { role } = req.params;
+
+    if (!["mitra", "pengguna"].includes(role)) {
+      return next(new apiError("Invalid role parameter", 400));
+    }
+
+    const users = await User.findAll({
+      where: { role },
+    });
+
+    res.status(200).json({
+      status: "Success",
+      data: users,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -298,4 +448,9 @@ module.exports = {
   sendEmailForgotPassword,
   authenticate,
   authenticateAdminMitra,
+  registerMitra,
+  editUser,
+  deleteUser,
+  getUsersByRole,
+  subtractBalance,
 };
