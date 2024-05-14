@@ -12,6 +12,7 @@ router.post(
   hotelController.createHotel
 );
 router.post("/tambahfasilitas", hotelController.addFacility);
+router.get("/fasilitas", hotelController.getAllFacility);
 router.get("/totalhotel", hotelController.getAllHotel);
 router.get("/hotel/:id", hotelController.getHotelById);
 router.put(
