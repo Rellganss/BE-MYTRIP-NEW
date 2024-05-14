@@ -11,6 +11,7 @@ router.post(
   multer.single("hotel_foto"),
   hotelController.createHotel
 );
+router.post("/tambahfasilitas", hotelController.addFacility);
 router.get("/totalhotel", hotelController.getAllHotel);
 router.get("/hotel/:id", hotelController.getHotelById);
 router.put(

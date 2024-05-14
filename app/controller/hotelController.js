@@ -37,6 +37,32 @@ const createHotel = async (req, res, next) => {
   }
 };
 
+const addFacility = async (req, res, next) => {
+  try {
+    // Mendapatkan data fasilitas dari body request
+    const { name } = req.body;
+
+    // Membuat fasilitas baru di database
+    const newFacility = await Facility.create({
+      name: name,
+    });
+
+    // Mengembalikan respon dengan status berhasil dan data fasilitas yang baru dibuat
+    return res.status(201).json({
+      status: "success",
+      message: "Facility added successfully",
+      data: newFacility,
+    });
+  } catch (error) {
+    // Mengembalikan respon dengan status gagal dan pesan error jika terjadi kesalahan
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to add facility",
+      error: error.message,
+    });
+  }
+};
+
 const getAllHotel = async (req, res, next) => {
   try {
     const allHotel = await Hotel.findAll();
@@ -125,6 +151,7 @@ const deleteHotel = async (req, res, next) => {
 
 module.exports = {
   createHotel,
+  addFacility,
   getAllHotel,
   getHotelById,
   updateHotel,
