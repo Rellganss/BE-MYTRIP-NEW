@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Reservasi extends Model {
     /**
@@ -11,31 +9,39 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Reservasi.belongsTo(models.Pesawat, {
-        foreignKey: 'id_pesawat',
-        as: 'pesawat',
+        foreignKey: "id_pesawat",
+        as: "pesawat",
       });
       Reservasi.belongsTo(models.Hotel, {
-        foreignKey: 'id_hotel',
-        as: 'hotel',
+        foreignKey: "id_hotel",
+        as: "hotel",
       });
       Reservasi.hasOne(models.UserTransaksi, {
-        foreignKey: 'id_reservasi',
-        as: 'user_transaksi',
+        foreignKey: "id_reservasi",
+        as: "user_transaksi",
       });
-      
     }
   }
-  Reservasi.init({
-    id_pesawat: DataTypes.INTEGER,
-    id_hotel: DataTypes.INTEGER,
-    cek_in_hotel: DataTypes.DATE,
-    cek_out_hotel: DataTypes.DATE,
-    hotel_room: DataTypes.INTEGER,
-    seat: DataTypes.STRING,
-    total_price: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Reservasi',
-  });
+  Reservasi.init(
+    {
+      id_pesawat: DataTypes.INTEGER,
+      id_hotel: DataTypes.INTEGER,
+      cek_in_hotel: DataTypes.DATE,
+      cek_out_hotel: DataTypes.DATE,
+      hotel_room: DataTypes.INTEGER,
+      seat: DataTypes.STRING,
+      total_price: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "Reservasi",
+      hooks: {
+        beforeCreate: async (reservasi, options) => {
+          const maxId = await Reservasi.max("id");
+          reservasi.id = maxId + 1;
+        },
+      },
+    }
+  );
   return Reservasi;
 };

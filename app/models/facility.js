@@ -9,11 +9,17 @@ module.exports = (sequelize, DataTypes) => {
   }
   Facility.init(
     {
-      name: DataTypes.STRING
+      name: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: "Facility",
+      hooks: {
+        beforeCreate: async (facility, options) => {
+          const maxId = await Facility.max("id");
+          facility.id = maxId + 1;
+        },
+      },
     }
   );
   return Facility;

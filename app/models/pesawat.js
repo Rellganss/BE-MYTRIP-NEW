@@ -27,6 +27,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Pesawat",
+      hooks: {
+        beforeCreate: async (pesawat, options) => {
+          const maxId = await Pesawat.max("id");
+          pesawat.id = maxId + 1;
+        },
+      },
     }
   );
   return Pesawat;

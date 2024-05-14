@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Hotel extends Model {
     /**
@@ -10,22 +8,31 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Hotel.belongsToMany(models.Facility, { through: 'HotelFacility' });
+      Hotel.belongsToMany(models.Facility, { through: "HotelFacility" });
     }
   }
-  Hotel.init({
-    hotel_name: DataTypes.STRING,
-    hotel_city: DataTypes.STRING,
-    hotel_desc: DataTypes.STRING,
-    hotel_alamat: DataTypes.STRING,
-    hotel_foto: DataTypes.STRING,
-    hotel_harga: DataTypes.INTEGER,
-    hotel_kategori: {
-      type: DataTypes.ENUM(["singleBed", "twinBed", "family"]),
+  Hotel.init(
+    {
+      hotel_name: DataTypes.STRING,
+      hotel_city: DataTypes.STRING,
+      hotel_desc: DataTypes.STRING,
+      hotel_alamat: DataTypes.STRING,
+      hotel_foto: DataTypes.STRING,
+      hotel_harga: DataTypes.INTEGER,
+      hotel_kategori: {
+        type: DataTypes.ENUM(["singleBed", "twinBed", "family"]),
+      },
     },
-  }, {
-    sequelize,
-    modelName: 'Hotel',
-  });
+    {
+      sequelize,
+      modelName: "Hotel",
+      hooks: {
+        beforeCreate: async (hotel, options) => {
+          const maxId = await Hotel.max("id");
+          hotel.id = maxId + 1;
+        },
+      },
+    }
+  );
   return Hotel;
 };

@@ -1,8 +1,5 @@
-'use strict';
-const {
-  Model,
-  Sequelize
-} = require('sequelize');
+"use strict";
+const { Model, Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class UserTransaksi extends Model {
     /**
@@ -12,23 +9,32 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       UserTransaksi.belongsTo(models.Reservasi, {
-        foreignKey: 'id_reservasi',
+        foreignKey: "id_reservasi",
       });
       UserTransaksi.belongsTo(models.User, {
-        foreignKey: 'id_user',
+        foreignKey: "id_user",
       });
     }
   }
-  UserTransaksi.init({
-    id_user: DataTypes.INTEGER,
-    id_reservasi: DataTypes.INTEGER,
-    status: {
-      type: Sequelize.ENUM(["pending", "success", "cancel"]),
-      defaultValue: "pending"
+  UserTransaksi.init(
+    {
+      id_user: DataTypes.INTEGER,
+      id_reservasi: DataTypes.INTEGER,
+      status: {
+        type: Sequelize.ENUM(["pending", "success", "cancel"]),
+        defaultValue: "pending",
+      },
+    },
+    {
+      sequelize,
+      modelName: "UserTransaksi",
+      hooks: {
+        beforeCreate: async (userTransaksi, options) => {
+          const maxId = await UserTransaksi.max("id");
+          userTransaksi.id = maxId + 1;
+        },
+      },
     }
-  }, {
-    sequelize,
-    modelName: 'UserTransaksi',
-  });
+  );
   return UserTransaksi;
 };

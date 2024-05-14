@@ -5,7 +5,8 @@ const User = require("./user"); // Pastikan impor model user dilakukan dengan be
 module.exports = (sequelize, DataTypes) => {
   class Auth extends Model {
     static associate(models) {
-      Auth.belongsTo(models.User, { // Ganti 'user' dengan 'User'
+      Auth.belongsTo(models.User, {
+        // Ganti 'user' dengan 'User'
         foreignKey: "id_user",
       });
     }
@@ -20,6 +21,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Auth",
+      hooks: {
+        beforeCreate: async (auth, options) => {
+          const maxId = await Auth.max("id");
+          auth.id = maxId + 1;
+        },
+      },
     }
   );
   return Auth;

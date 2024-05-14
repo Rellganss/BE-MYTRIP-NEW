@@ -34,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "User",
+      hooks: {
+        beforeCreate: async (user, options) => {
+          const maxId = await User.max("id");
+          user.id = maxId + 1;
+        },
+      },
     }
   );
   return User;
