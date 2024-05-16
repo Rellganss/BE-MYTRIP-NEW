@@ -118,10 +118,31 @@ const deletePesawat = async (req, res, next) => {
   }
 };
 
+const getAllPesawatByUserId = async (req, res, next) => {
+  try {
+    const { id_user } = req.params;
+    const pesawatByUser = await Pesawat.findAll({
+      where: { id_user },
+    });
+
+    if (pesawatByUser.length === 0) {
+      return next(new apiError("No pesawat found for this user", 404));
+    }
+
+    res.status(200).json({
+      status: "Get all pesawat by user id successful",
+      data: pesawatByUser,
+    });
+  } catch (err) {
+    next(new apiError(err.message, 500));
+  }
+};
+
 module.exports = {
   createPesawat,
   getAllPesawat,
   getPesawatById,
   updatePesawat,
   deletePesawat,
+  getAllPesawatByUserId,
 };

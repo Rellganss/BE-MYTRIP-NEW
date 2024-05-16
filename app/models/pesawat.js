@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_pesawat",
         as: "reservasi",
       });
+      Pesawat.belongsTo(models.User, {
+        foreignKey: "id_user",
+      });
     }
   }
   Pesawat.init(
@@ -23,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       pesawat_foto: DataTypes.STRING,
       pesawat_depature: DataTypes.DATE,
       pesawat_destination: DataTypes.DATE,
+      id_user: DataTypes.INTEGER,
     },
     {
       sequelize,

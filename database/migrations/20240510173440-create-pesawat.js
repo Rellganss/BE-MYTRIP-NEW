@@ -30,6 +30,10 @@ module.exports = {
       pesawat_destination: {
         type: Sequelize.DATE,
       },
+      id_user: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

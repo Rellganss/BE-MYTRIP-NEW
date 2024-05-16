@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const hotelfacility = require("./hotelfacility");
 module.exports = (sequelize, DataTypes) => {
   class Reservasi extends Model {
     /**
@@ -20,12 +21,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_reservasi",
         as: "user_transaksi",
       });
+      Reservasi.belongsTo(models.hotelfacility, {
+        foreignKey: "id_hotel_facility",
+      });
     }
   }
   Reservasi.init(
     {
       id_pesawat: DataTypes.INTEGER,
-      id_hotel: DataTypes.INTEGER,
+      id_hotel_facility: DataTypes.INTEGER,
       cek_in_hotel: DataTypes.DATE,
       cek_out_hotel: DataTypes.DATE,
       hotel_room: DataTypes.INTEGER,

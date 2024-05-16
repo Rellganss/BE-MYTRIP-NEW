@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
   class Auth extends Model {
     static associate(models) {
       Auth.belongsTo(models.User, {
-        // Ganti 'user' dengan 'User'
         foreignKey: "id_user",
       });
     }

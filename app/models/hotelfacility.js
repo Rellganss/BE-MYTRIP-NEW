@@ -10,12 +10,20 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       HotelFacility.belongsTo(models.Hotel, { foreignKey: "hotelId" });
       HotelFacility.belongsTo(models.Facility, { foreignKey: "facilityId" });
+      HotelFacility.hasOne(models.Reservasi, {
+        foreignKey: "id_hotel_facility",
+        allowNull: false,
+      });
+      HotelFacility.belongsTo(models.User, {
+        foreignKey: "id_user",
+      });
     }
   }
   HotelFacility.init(
     {
       hotelId: DataTypes.INTEGER,
       facilityId: DataTypes.INTEGER,
+      id_user: DataTypes.INTEGER,
     },
     {
       sequelize,
