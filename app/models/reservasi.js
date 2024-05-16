@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_reservasi",
         as: "user_transaksi",
       });
-      Reservasi.belongsTo(models.hotelfacility, {
+      Reservasi.belongsTo(models.HotelFacility, {
         foreignKey: "id_hotel_facility",
       });
     }

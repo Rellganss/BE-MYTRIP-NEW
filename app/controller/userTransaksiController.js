@@ -1,5 +1,5 @@
 const { UserTransaksi, Reservasi, User } = require("../models");
-const apiError = require("../utils/apiError");
+const apiError = require("../../utils/apiError");
 
 const getUserTransaksi = async (req, res, next) => {
   const { id } = req.params;
