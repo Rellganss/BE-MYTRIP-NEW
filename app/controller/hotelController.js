@@ -80,7 +80,18 @@ const getAllFacility = async (req, res, next) => {
 
 const getAllHotel = async (req, res, next) => {
   try {
-    const allHotel = await Hotel.findAll();
+    const allHotel = await HotelFacility.findAll({
+      include: [
+        {
+          model: Hotel,
+          as: "hotel",
+        },
+        {
+          model: Facility,
+          as: "facility",
+        },
+      ],
+    });
 
     res.status(200).json({
       status: "Get all hotel successful",
@@ -94,7 +105,18 @@ const getAllHotel = async (req, res, next) => {
 const getHotelById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const hotelById = await Hotel.findByPk(id);
+    const hotelById = await HotelFacility.findByPk(id, {
+      include: [
+        {
+          model: Hotel,
+          as: "hotel",
+        },
+        {
+          model: Facility,
+          as: "facility",
+        },
+      ],
+    });
 
     if (!hotelById) {
       return next(new apiError("Hotel not found", 404));
@@ -153,7 +175,7 @@ const updateHotel = async (req, res, next) => {
 const deleteHotel = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deletedHotel = await Hotel.destroy({ where: { id } });
+    const deletedHotel = await HotelFacility.destroy({ where: { id } });
 
     res.status(200).json({
       status: "Delete hotel successful",
