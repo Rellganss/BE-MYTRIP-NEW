@@ -1,13 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
-const hotelfacility = require("./hotelfacility");
 module.exports = (sequelize, DataTypes) => {
   class Reservasi extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Reservasi.belongsTo(models.Pesawat, {
         foreignKey: "id_pesawat",
@@ -19,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       Reservasi.belongsTo(models.HotelFacility, {
         foreignKey: "id_hotel_facility",
+        as: "hotelFacility",
       });
     }
   }

@@ -2,7 +2,7 @@ const router = require("express").Router();
 const UserTransaksi = require("../controller/userTransaksiController");
 const authMe = require("../middleware/authMe");
 
-router.get("/getUserTransaksi/:id", authMe, UserTransaksi.getUserTransaksi);
+router.get("/getUserTransaksi", authMe, UserTransaksi.getUserTransaksi);
 router.delete(
   "/deleteUserTransaksi/:id",
   authMe,

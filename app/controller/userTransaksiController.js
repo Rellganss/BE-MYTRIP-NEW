@@ -8,23 +8,25 @@ const {
 const apiError = require("../../utils/apiError");
 
 const getUserTransaksi = async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const userTransaksi = await UserTransaksi.findByPk(id, {
+    const userTransaksi = await UserTransaksi.findAll({
+      where: { id_user: req.user.id },
       include: [
         { model: Reservasi, as: "reservasi" },
         { model: User, as: "user" },
       ],
     });
-    if (!userTransaksi) {
-      return next(new apiError("User transaksi not found", 404));
+
+    if (!userTransaksi || userTransaksi.length === 0) {
+      return next(new ApiError("User transaksi not found", 404));
     }
+
     res.status(200).json({
       status: "Get user transaksi successful",
       data: userTransaksi,
     });
   } catch (err) {
-    next(new apiError(err.message, 500));
+    next(new ApiError(err.message, 500));
   }
 };
 
@@ -80,11 +82,19 @@ const updateUserTransaksi = async (req, res, next) => {
 
     if (status === "pending" || status === "cancel") {
       userTransaksi.status = status;
-    } else if (status === "success") {
+      await userTransaksi.save();
+      return res.status(200).json({
+        status: "User transaksi updated",
+        data: userTransaksi,
+      });
+    }
+
+    if (status === "success") {
       if (user.saldo_user >= reservasi.total_price) {
         user.saldo_user -= reservasi.total_price;
         userTransaksi.status = "success";
         await user.save();
+        await userTransaksi.save();
 
         if (reservasi.id_pesawat) {
           const pesawat = await Pesawat.findByPk(reservasi.id_pesawat);
@@ -101,6 +111,11 @@ const updateUserTransaksi = async (req, res, next) => {
           hotelFacilityOwner.saldo_user += hotelFacility.hotel_harga; // Assuming hotel_harga is the price of the hotel facility
           await hotelFacilityOwner.save();
         }
+
+        return res.status(200).json({
+          status: "User transaksi updated",
+          data: userTransaksi,
+        });
       } else {
         return res.status(400).json({
           status: "User transaksi not updated",
@@ -110,11 +125,7 @@ const updateUserTransaksi = async (req, res, next) => {
       }
     }
 
-    await userTransaksi.save();
-    res.status(200).json({
-      status: "User transaksi updated",
-      data: userTransaksi,
-    });
+    return next(new apiError("Invalid status", 400));
   } catch (err) {
     next(new apiError(err.message, 500));
   }

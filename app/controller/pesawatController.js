@@ -20,6 +20,7 @@ const createPesawat = async (req, res, next) => {
     const newPesawat = await Pesawat.create({
       ...pesawatBody,
       pesawat_foto,
+      id_user: req.user.id,
     });
 
     res.status(201).json({

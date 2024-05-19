@@ -63,22 +63,25 @@ const login = async (req, res, next) => {
 
     const user = await Auth.findOne({
       where: { email },
-      include: [User],
+      include: {
+        model: User,
+        as: "user",
+      },
     });
 
     if (!user) {
-      return next(new ApiError("Email not found", 404));
+      return next(new apiError("Email not found", 404));
     }
     if (!user.verified) {
-      return next(new ApiError("User not verified", 401));
+      return next(new apiError("User not verified", 401));
     }
 
     if (bcrypt.compareSync(password, user.password)) {
       const token = jwt.sign(
         {
           id: user.id_user,
-          username: user.User.name,
-          role: user.User.role,
+          username: user.user.name,
+          role: user.user.role,
           email: user.email,
         },
         process.env.JWT_SECRET,
@@ -91,10 +94,10 @@ const login = async (req, res, next) => {
         data: token,
       });
     } else {
-      return next(new ApiError("Incorrect password", 401));
+      return next(new apiError("Incorrect password", 401));
     }
   } catch (err) {
-    next(new ApiError(err.message, 500));
+    next(new apiError(err.message, 500));
   }
 };
 
@@ -113,7 +116,9 @@ const topUp = async (req, res, next) => {
       return next(new apiError("User not found", 404));
     }
 
-    existingUser.saldo_user = (existingUser.saldo_user || 0) + amount;
+    const convertedAmount = amount / 1000;
+
+    existingUser.saldo_user = (existingUser.saldo_user || 0) + convertedAmount;
     await existingUser.save();
 
     res.status(200).json({
@@ -172,14 +177,17 @@ const authenticateAdminMitra = async (req, res, next) => {
       where: {
         email,
       },
-      include: ["User"],
+      include: {
+        model: User,
+        as: "user",
+      },
     });
 
     if (!user) {
       return next(new apiError("Email not found", 404));
     }
 
-    if (user.User.role !== "admin" && user.User.role !== "mitra") {
+    if (user.user.role !== "admin" && user.user.role !== "mitra") {
       return next(
         new apiError("Unauthorized. Only admin and mitra can login", 401)
       );
@@ -189,8 +197,8 @@ const authenticateAdminMitra = async (req, res, next) => {
       const token = jwt.sign(
         {
           id: user.userId,
-          username: user.User.name,
-          role: user.User.role,
+          username: user.user.name,
+          role: user.user.role,
           email: user.email,
         },
         process.env.JWT_SECRET
@@ -200,7 +208,7 @@ const authenticateAdminMitra = async (req, res, next) => {
         status: "Success",
         message: "Berhasil login",
         data: token,
-        role: user.User.role,
+        role: user.user.role,
       });
     } else {
       return next(new apiError("Incorrect password", 401));

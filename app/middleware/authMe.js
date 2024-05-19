@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
     }
 
     const user = await User.findByPk(payload.id, {
-      include: ["Auth"],
+      include: { model: Auth, as: "auth" },
     });
 
     if (!user) {

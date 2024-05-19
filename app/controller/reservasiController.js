@@ -66,7 +66,7 @@ const createReservation = async (req, res, next) => {
     });
 
     await UserTransaksi.create({
-      id_user,
+      id_user: req.user.id,
       id_reservasi: newReservation.id,
       status: "pending",
     });

@@ -4,14 +4,21 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class HotelFacility extends Model {
     static associate(models) {
-      HotelFacility.belongsTo(models.Hotel, { foreignKey: "hotelId" });
-      HotelFacility.belongsTo(models.Facility, { foreignKey: "facilityId" });
+      HotelFacility.belongsTo(models.Hotel, {
+        foreignKey: "hotelId",
+        as: "hotel",
+      });
+      HotelFacility.belongsTo(models.Facility, {
+        foreignKey: "facilityId",
+        as: "facility",
+      });
       HotelFacility.hasOne(models.Reservasi, {
         foreignKey: "id_hotel_facility",
-        allowNull: false,
+        as: "reservasi",
       });
       HotelFacility.belongsTo(models.User, {
         foreignKey: "id_user",
+        as: "user",
       });
     }
   }
