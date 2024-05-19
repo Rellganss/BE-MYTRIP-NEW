@@ -14,9 +14,9 @@ router.post(
 
 router.get("/totalpesawat", authMe, pesawatController.getAllPesawat);
 
-router.get("/pesawat/:id", authMe, pesawatController.getPesawatById);
+router.get("/getPesawatById/:id", authMe, pesawatController.getPesawatById);
 router.get(
-  "/pesawat/user/:id_user",
+  "/getAllPesawatByUserId/user/:id_user",
   authMe,
   checkRole(["admin", "mitra"]),
   pesawatController.getAllPesawatByUserId
