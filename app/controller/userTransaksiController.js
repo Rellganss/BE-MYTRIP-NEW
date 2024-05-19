@@ -4,6 +4,7 @@ const {
   User,
   HotelFacility,
   Pesawat,
+  Hotel,
 } = require("../models");
 const apiError = require("../../utils/apiError");
 
@@ -68,7 +69,7 @@ const updateUserTransaksi = async (req, res, next) => {
 
     const currentTime = new Date();
     const transactionTime = new Date(userTransaksi.createdAt);
-    const timeDifference = (currentTime - transactionTime) / (1000 * 60); // Time difference in minutes
+    const timeDifference = (currentTime - transactionTime) / (1000 * 60);
 
     if (timeDifference > 5) {
       userTransaksi.status = "cancel";
@@ -98,18 +99,29 @@ const updateUserTransaksi = async (req, res, next) => {
 
         if (reservasi.id_pesawat) {
           const pesawat = await Pesawat.findByPk(reservasi.id_pesawat);
-          const pesawatOwner = await User.findByPk(pesawat.id_user);
-          pesawatOwner.saldo_user += pesawat.pesawat_harga;
-          await pesawatOwner.save();
+          if (pesawat) {
+            const pesawatOwner = await User.findByPk(pesawat.id_user);
+            if (pesawatOwner) {
+              pesawatOwner.saldo_user += pesawat.pesawat_harga;
+              await pesawatOwner.save();
+            }
+          }
         }
 
         if (reservasi.id_hotel_facility) {
           const hotelFacility = await HotelFacility.findByPk(
             reservasi.id_hotel_facility
           );
-          const hotelFacilityOwner = await User.findByPk(hotelFacility.id_user);
-          hotelFacilityOwner.saldo_user += hotelFacility.hotel_harga; // Assuming hotel_harga is the price of the hotel facility
-          await hotelFacilityOwner.save();
+          if (hotelFacility) {
+            const hotelFacilityOwner = await User.findByPk(
+              hotelFacility.id_user
+            );
+            const hotel = await Hotel.findByPk(hotelFacility.hotelId);
+            if (hotelFacilityOwner && hotel) {
+              hotelFacilityOwner.saldo_user += hotel.hotel_harga;
+              await hotelFacilityOwner.save();
+            }
+          }
         }
 
         return res.status(200).json({

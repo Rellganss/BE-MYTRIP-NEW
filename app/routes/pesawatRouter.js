@@ -13,7 +13,7 @@ router.post(
 
 router.get("/totalpesawat", pesawatController.getAllPesawat);
 
-router.get("/getPesawatById/:id", authMe, pesawatController.getPesawatById);
+router.get("/getPesawatById/:id", pesawatController.getPesawatById);
 router.get(
   "/getAllPesawatByUserId/user/:id_user",
   authMe,

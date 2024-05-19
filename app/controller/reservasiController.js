@@ -20,13 +20,8 @@ const getRandomHotelRoom = () => {
 };
 
 const createReservation = async (req, res, next) => {
-  const {
-    id_pesawat,
-    id_hotel_facility,
-    cek_in_hotel,
-    cek_out_hotel,
-    id_user,
-  } = req.body;
+  const { id_pesawat, id_hotel_facility, cek_in_hotel, cek_out_hotel } =
+    req.body;
 
   try {
     let total_price = 0;

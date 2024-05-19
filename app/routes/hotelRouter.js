@@ -13,7 +13,7 @@ router.post(
 router.post("/tambahfasilitas", hotelController.addFacility);
 router.get("/fasilitas", hotelController.getAllFacility);
 router.get("/totalhotel", hotelController.getAllHotel);
-router.get("/hotel/:id", hotelController.getHotelById);
+router.get("/getHotelById/:id", hotelController.getHotelById);
 router.put(
   "/perbaruihotel/:id",
   authenticate,
