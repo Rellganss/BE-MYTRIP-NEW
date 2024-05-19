@@ -27,7 +27,7 @@ dotenv.config();
 
       await queryInterface.bulkInsert("auths", [
         {
-          email: "adminc8@mail.com",
+          email: "adminc8@gmail.com",
           password: hashedPassword,
           id_user: user[0].id,
           verified: true,

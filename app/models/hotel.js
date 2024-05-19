@@ -1,14 +1,13 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Hotel extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      Hotel.belongsToMany(models.Facility, { through: "HotelFacility" });
+      Hotel.belongsToMany(models.Facility, {
+        through: "HotelFacility",
+        foreignKey: "hotelId",
+      });
     }
   }
   Hotel.init(
@@ -20,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       hotel_foto: DataTypes.STRING,
       hotel_harga: DataTypes.INTEGER,
       hotel_kategori: {
-        type: DataTypes.ENUM(["singleBed", "twinBed", "family"]),
+        type: DataTypes.ENUM("singleBed", "twinBed", "family"),
       },
     },
     {

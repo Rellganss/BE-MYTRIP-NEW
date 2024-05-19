@@ -13,7 +13,7 @@ dotenv.config();
         {
           name: "mitra1",
           no_telp: "+628236576340987",
-          role: "admin",
+          role: "mitra",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -27,9 +27,9 @@ dotenv.config();
 
       await queryInterface.bulkInsert("auths", [
         {
-          email: "mitra1@mail.com",
+          email: "mitra1@gmail.com",
           password: hashedPassword,
-          id_user: users[1].id,
+          id_user: users[0].id,
           verified: true,
           createdAt: new Date(),
           updatedAt: new Date(),

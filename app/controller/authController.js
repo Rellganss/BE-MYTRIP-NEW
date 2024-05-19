@@ -62,31 +62,18 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await Auth.findOne({
-      where: {
-        email,
-      },
+      where: { email },
       include: [User],
     });
 
     if (!user) {
-      return next(new apiError("Email not found", 404));
+      return next(new ApiError("Email not found", 404));
     }
-    if (user.verified !== true) {
-      return next(new apiError("User not verified", 401));
-    }
-
-    const symbolRegex = /[!@#$%^&*(),.?":{}|<>]/;
-    const invalidLength = password.length < 8 || symbolRegex.test(password);
-    if (invalidLength) {
-      return next(
-        new apiError(
-          "Password must be at least 8 characters and contain no special characters",
-          400
-        )
-      );
+    if (!user.verified) {
+      return next(new ApiError("User not verified", 401));
     }
 
-    if (user && bcrypt.compareSync(password, user.password)) {
+    if (bcrypt.compareSync(password, user.password)) {
       const token = jwt.sign(
         {
           id: user.id_user,
@@ -94,7 +81,8 @@ const login = async (req, res, next) => {
           role: user.User.role,
           email: user.email,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
       );
 
       res.status(200).json({
@@ -103,10 +91,10 @@ const login = async (req, res, next) => {
         data: token,
       });
     } else {
-      return next(new apiError("Incorrect password", 401));
+      return next(new ApiError("Incorrect password", 401));
     }
   } catch (err) {
-    next(new apiError(err.message, 500));
+    next(new ApiError(err.message, 500));
   }
 };
 
@@ -191,7 +179,7 @@ const authenticateAdminMitra = async (req, res, next) => {
       return next(new apiError("Email not found", 404));
     }
 
-    if (user.User.role !== "admin" || user.User.role !== "mitra") {
+    if (user.User.role !== "admin" && user.User.role !== "mitra") {
       return next(
         new apiError("Unauthorized. Only admin and mitra can login", 401)
       );

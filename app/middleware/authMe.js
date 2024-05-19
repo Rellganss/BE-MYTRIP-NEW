@@ -12,15 +12,30 @@ module.exports = async (req, res, next) => {
 
     const token = bearerToken.split("Bearer ")[1];
 
+    if (!token) {
+      return next(new ApiError("Token is missing or malformed", 401));
+    }
+
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(payload);
+
+    if (!payload || !payload.id) {
+      return next(new ApiError("Invalid token payload", 401));
+    }
+
     const user = await User.findByPk(payload.id, {
       include: ["Auth"],
     });
 
+    if (!user) {
+      return next(new ApiError("User not found", 404));
+    }
+
     req.user = user;
     next();
   } catch (err) {
+    if (err instanceof jwt.JsonWebTokenError) {
+      return next(new ApiError("Invalid token", 401));
+    }
     next(new ApiError(err.message, 500));
   }
 };

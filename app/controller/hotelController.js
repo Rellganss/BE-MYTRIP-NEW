@@ -5,6 +5,7 @@ const imagekit = require("../libs/imagekit");
 
 const createHotel = async (req, res, next) => {
   const hotelBody = req.body;
+  const { facilities } = hotelBody;
   const file = req.file;
   let hotel_foto;
   try {
@@ -13,27 +14,32 @@ const createHotel = async (req, res, next) => {
       const extension = path.extname(filename);
       const uploadImage = await imagekit.upload({
         file: file.buffer,
-        fileName: `IMG-${Date.now()}.${extension}`,
+        fileName: `IMG-${Date.now()}${extension}`,
       });
       hotel_foto = uploadImage.url;
     }
-    // Membuat hotel baru
+
     const newHotel = await Hotel.create({
       ...hotelBody,
       hotel_foto,
     });
 
-    // Jika terdapat fasilitas yang dikirimkan, asosiasikan fasilitas dengan hotel
-    // if (hotel_facilities && hotel_facilities.length > 0) {
-    //   await newHotel.addFacilities(hotel_facilities); // Menambahkan fasilitas ke hotel menggunakan metode addFacilities yang disediakan oleh Sequelize
-    // }
+    if (facilities && facilities.length > 0) {
+      for (const facilityId of facilities) {
+        await HotelFacility.create({
+          hotelId: newHotel.id,
+          facilityId,
+          id_user: req.user.id,
+        });
+      }
+    }
 
     res.status(201).json({
       status: "Create hotel successful",
       data: newHotel,
     });
   } catch (err) {
-    next(new apiError(err.message, 500));
+    next(new ApiError(err.message, 500));
   }
 };
 

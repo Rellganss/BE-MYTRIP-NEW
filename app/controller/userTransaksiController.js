@@ -1,5 +1,11 @@
-const { UserTransaksi, Reservasi, User } = require("../models");
-const apiError = require("../utils/apiError");
+const {
+  UserTransaksi,
+  Reservasi,
+  User,
+  HotelFacility,
+  Pesawat,
+} = require("../models");
+const apiError = require("../../utils/apiError");
 
 const getUserTransaksi = async (req, res, next) => {
   const { id } = req.params;
@@ -79,6 +85,22 @@ const updateUserTransaksi = async (req, res, next) => {
         user.saldo_user -= reservasi.total_price;
         userTransaksi.status = "success";
         await user.save();
+
+        if (reservasi.id_pesawat) {
+          const pesawat = await Pesawat.findByPk(reservasi.id_pesawat);
+          const pesawatOwner = await User.findByPk(pesawat.id_user);
+          pesawatOwner.saldo_user += pesawat.pesawat_harga;
+          await pesawatOwner.save();
+        }
+
+        if (reservasi.id_hotel_facility) {
+          const hotelFacility = await HotelFacility.findByPk(
+            reservasi.id_hotel_facility
+          );
+          const hotelFacilityOwner = await User.findByPk(hotelFacility.id_user);
+          hotelFacilityOwner.saldo_user += hotelFacility.hotel_harga; // Assuming hotel_harga is the price of the hotel facility
+          await hotelFacilityOwner.save();
+        }
       } else {
         return res.status(400).json({
           status: "User transaksi not updated",

@@ -13,15 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_pesawat",
         as: "pesawat",
       });
-      Reservasi.belongsTo(models.Hotel, {
-        foreignKey: "id_hotel",
-        as: "hotel",
-      });
       Reservasi.hasOne(models.UserTransaksi, {
         foreignKey: "id_reservasi",
         as: "user_transaksi",
       });
-      Reservasi.belongsTo(models.hotelfacility, {
+      Reservasi.belongsTo(models.HotelFacility, {
         foreignKey: "id_hotel_facility",
       });
     }

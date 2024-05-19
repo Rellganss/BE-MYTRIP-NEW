@@ -7,7 +7,6 @@ const authenticate = require("../middleware/authMe");
 router.post(
   "/tambahhotel",
   authenticate,
-  checkRole(["mitra"]),
   multer.single("hotel_foto"),
   hotelController.createHotel
 );

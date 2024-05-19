@@ -13,9 +13,9 @@ module.exports = {
           "https://ik.imagekit.io/vyck38py3/bitebrands%20-%20logo%20pesawat%20maskapai%20penerbangan%20internasional%20dunia%20airlines%2061.jpg?updatedAt=1715533451837",
         pesawat_depature: "2024-05-01 10:00:00",
         pesawat_destination: "2024-05-01 12:00:00",
-        id_user: 1,
-        updatedAt: "2022-11-28T06:25:24.446Z",
-        createdAt: "2022-11-28T06:25:24.446Z",
+        id_user: 2,
+        updatedAt: new Date(),
+        createdAt: new Date(),
       },
       {
         pesawat_name: "Continental Airlines",
@@ -26,9 +26,9 @@ module.exports = {
           "https://ik.imagekit.io/vyck38py3/bitebrands%20-%20logo%20pesawat%20maskapai%20penerbangan%20internasional%20dunia%20airlines%2045.jpg?updatedAt=1715533451754",
         pesawat_depature: "2024-05-01 08:00:00",
         pesawat_destination: "2024-05-01 10:00:00",
-        id_user: 1,
-        updatedAt: "2022-11-28T06:25:24.446Z",
-        createdAt: "2022-11-28T06:25:24.446Z",
+        id_user: 2,
+        updatedAt: new Date(),
+        createdAt: new Date(),
       },
     ];
     await queryInterface.bulkInsert("Pesawats", pesawats);
