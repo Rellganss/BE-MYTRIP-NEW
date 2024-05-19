@@ -21,6 +21,6 @@ router.put(
   multer.single("hotel_foto"),
   hotelController.updateHotel
 );
-router.delete("/:id", hotelController.deleteHotel);
+router.delete("/deletehotel/:id", hotelController.deleteHotel);
 
 module.exports = router;

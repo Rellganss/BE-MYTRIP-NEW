@@ -12,23 +12,13 @@ router.post(
   pesawatController.createPesawat
 );
 
-router.get(
-  "/totalpesawat",
-  authMe,
-  checkRole(["mitra"]),
-  pesawatController.getAllPesawat
-);
+router.get("/totalpesawat", authMe, pesawatController.getAllPesawat);
 
-router.get(
-  "/pesawat/:id",
-  authMe,
-  checkRole(["mitra"]),
-  pesawatController.getPesawatById
-);
+router.get("/pesawat/:id", authMe, pesawatController.getPesawatById);
 router.get(
   "/pesawat/user/:id_user",
   authMe,
-  checkRole(["admin"]),
+  checkRole(["admin", "mitra"]),
   pesawatController.getAllPesawatByUserId
 );
 
@@ -41,7 +31,7 @@ router.put(
 );
 
 router.delete(
-  "/:id",
+  "/deletepesawat/:id",
   authMe,
   checkRole(["mitra"]),
   pesawatController.deletePesawat
