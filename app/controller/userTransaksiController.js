@@ -18,7 +18,7 @@ const getUserTransaksi = async (req, res, next) => {
     });
 
     if (!userTransaksi || userTransaksi.length === 0) {
-      return next(new ApiError("User transaksi not found", 404));
+      return next(new apiError("User transaksi not found", 404));
     }
 
     res.status(200).json({
@@ -26,7 +26,7 @@ const getUserTransaksi = async (req, res, next) => {
       data: userTransaksi,
     });
   } catch (err) {
-    next(new ApiError(err.message, 500));
+    next(new apiError(err.message, 500));
   }
 };
 

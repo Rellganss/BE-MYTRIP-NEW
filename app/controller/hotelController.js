@@ -39,7 +39,7 @@ const createHotel = async (req, res, next) => {
       data: newHotel,
     });
   } catch (err) {
-    next(new ApiError(err.message, 500));
+    next(new apiError(err.message, 500));
   }
 };
 
