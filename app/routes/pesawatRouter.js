@@ -23,16 +23,10 @@ router.get(
 router.put(
   "/perbaruipesawat/:id",
   authMe,
-  checkRole(["mitra"]),
   multer.single("pesawat_foto"),
   pesawatController.updatePesawat
 );
 
-router.delete(
-  "/deletepesawat/:id",
-  authMe,
-  checkRole(["mitra"]),
-  pesawatController.deletePesawat
-);
+router.delete("/deletepesawat/:id", authMe, pesawatController.deletePesawat);
 
 module.exports = router;
