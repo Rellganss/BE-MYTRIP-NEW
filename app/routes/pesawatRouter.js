@@ -7,18 +7,16 @@ const checkRole = require("../middleware/checkRole");
 router.post(
   "/tambahpesawat",
   authMe,
-  checkRole(["mitra"]),
   multer.single("pesawat_foto"),
   pesawatController.createPesawat
 );
 
-router.get("/totalpesawat", authMe, pesawatController.getAllPesawat);
+router.get("/totalpesawat", pesawatController.getAllPesawat);
 
 router.get("/getPesawatById/:id", authMe, pesawatController.getPesawatById);
 router.get(
   "/getAllPesawatByUserId/user/:id_user",
   authMe,
-  checkRole(["admin", "mitra"]),
   pesawatController.getAllPesawatByUserId
 );
 

@@ -17,7 +17,6 @@ router.get("/hotel/:id", hotelController.getHotelById);
 router.put(
   "/perbaruihotel/:id",
   authenticate,
-  checkRole(["mitra", "admin"]),
   multer.single("hotel_foto"),
   hotelController.updateHotel
 );

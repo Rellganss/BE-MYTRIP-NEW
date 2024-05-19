@@ -12,28 +12,13 @@ router.post("/member/login", Auth.login);
 router.post("/forgot-password", Auth.forgotPassword);
 router.get("/me", authMe, Auth.authenticate);
 router.post("/topup/:userId", Auth.topUp);
-router.post(
-  "/admin/subtractBalance",
-  authMe,
-  checkRole(["admin"]),
-  Auth.subtractBalance
-);
+router.post("/admin/subtractBalance", authMe, Auth.subtractBalance);
 router.post("/send-email-forgot-password", Auth.sendEmailForgotPassword);
 
 router.post("/admin/registerMitra", validateEmail, Auth.registerMitra);
 
 router.put("/admin/editUser/:id", authMe, checkRole(["admin"]), Auth.editUser);
-router.delete(
-  "/admin/deleteUser/:id",
-  authMe,
-  checkRole(["admin"]),
-  Auth.deleteUser
-);
-router.get(
-  "/admin/getUsersByRole/:role",
-  authMe,
-  checkRole(["admin"]),
-  Auth.getUsersByRole
-);
+router.delete("/admin/deleteUser/:id", authMe, Auth.deleteUser);
+router.get("/admin/getUsersByRole/:role", authMe, Auth.getUsersByRole);
 
 module.exports = router;
